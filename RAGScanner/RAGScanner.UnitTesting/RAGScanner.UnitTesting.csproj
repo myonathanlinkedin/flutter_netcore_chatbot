@@ -1,0 +1,30 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<TargetFramework>net9.0</TargetFramework>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<Nullable>enable</Nullable>
+
+		<IsPackable>false</IsPackable>
+		<IsTestProject>true</IsTestProject>
+	</PropertyGroup>
+	
+	<ItemGroup>
+		<PackageReference Include="coverlet.collector" />
+		<PackageReference Include="FluentAssertions" />
+		<PackageReference Include="Microsoft.NET.Test.Sdk" />
+		<PackageReference Include="Moq" />
+		<PackageReference Include="xunit" />
+		<PackageReference Include="xunit.runner.visualstudio" />
+		<PackageReference Include="FluentAssertions" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="..\..\Common\Common.Domain\Common.Domain.csproj" />
+		<ProjectReference Include="..\..\Common\Common.Infrastructure\Common.Infrastructure.csproj" />
+		<ProjectReference Include="..\RAGScanner.Application\RAGScanner.Application.csproj" />
+		<ProjectReference Include="..\RAGScanner.Domain\RAGScanner.Domain.csproj" />
+		<ProjectReference Include="..\RAGScanner.Infrastructure\RAGScanner.Infrastructure.csproj" />
+	</ItemGroup>
+
+</Project>

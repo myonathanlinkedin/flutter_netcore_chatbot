@@ -1,21 +1,31 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
-import '../../data/models/chat_message.dart';
+import '../../data/models/chat/chat_message.dart';
+import '../../services/chatbot_service.dart';
 import 'chat_event.dart';
 import 'chat_state.dart';
 
 class ChatBloc extends Bloc<ChatEvent, ChatState> {
-  ChatBloc() : super(const ChatState()) {
+  final ChatbotService _chatbotService;
+  final String _token;
+
+  ChatBloc({
+    required ChatbotService chatbotService,
+    required String token,
+  })  : _chatbotService = chatbotService,
+        _token = token,
+        super(const ChatState()) {
     on<SendMessage>(_onSendMessage);
+    on<LoadHistory>(_onLoadHistory);
     on<ClearChat>(_onClearChat);
-    on<Retry>(_onRetry);
+
+    // Load chat history when bloc is created
+    add(const ChatEvent.loadHistory());
   }
 
-  Future<void> _onSendMessage(
-    SendMessage event,
-    Emitter<ChatState> emit,
-  ) async {
-    emit(state.copyWith(isLoading: true));
+  Future<void> _onSendMessage(SendMessage event, Emitter<ChatState> emit) async {
     try {
+      emit(state.copyWith(isLoading: true, error: null));
+
       final userMessage = ChatMessage(
         id: DateTime.now().toString(),
         text: event.message,
@@ -28,12 +38,11 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
         isLoading: true,
       ));
 
-      // TODO: Implement actual API call to your .NET Core backend
-      await Future.delayed(const Duration(seconds: 1)); // Simulate API call
+      final response = await _chatbotService.sendMessage(event.message, _token);
 
       final botMessage = ChatMessage(
         id: DateTime.now().toString(),
-        text: 'This is a mock response. Implement actual API integration.',
+        text: response,
         isUser: false,
         timestamp: DateTime.now(),
       );
@@ -50,14 +59,34 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
     }
   }
 
-  void _onClearChat(ClearChat event, Emitter<ChatState> emit) {
-    emit(const ChatState());
+  Future<void> _onLoadHistory(LoadHistory event, Emitter<ChatState> emit) async {
+    try {
+      emit(state.copyWith(isLoading: true, error: null));
+
+      final history = await _chatbotService.getConversationHistory(_token);
+      final chatMessages = history.map((message) {
+        return ChatMessage(
+          id: message['id'] as String? ?? DateTime.now().toString(),
+          text: message['text'] as String? ?? '',
+          isUser: message['isUser'] as bool? ?? false,
+          timestamp: DateTime.parse(message['timestamp'] as String? ?? DateTime.now().toString()),
+          model: message['model'] as String?,
+        );
+      }).toList();
+
+      emit(state.copyWith(
+        messages: chatMessages,
+        isLoading: false,
+      ));
+    } catch (e) {
+      emit(state.copyWith(
+        isLoading: false,
+        error: e.toString(),
+      ));
+    }
   }
 
-  void _onRetry(Retry event, Emitter<ChatState> emit) {
-    if (state.messages.isNotEmpty) {
-      final lastUserMessage = state.messages.lastWhere((msg) => msg.isUser);
-      add(ChatEvent.sendMessage(lastUserMessage.text));
-    }
+  void _onClearChat(ClearChat event, Emitter<ChatState> emit) {
+    emit(state.copyWith(messages: []));
   }
 } 
