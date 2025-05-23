@@ -8,6 +8,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   final AuthService _authService;
   final SharedPreferences _prefs;
   static const String _tokenKey = 'auth_token';
+  static const String _refreshTokenKey = 'refresh_token';
 
   AuthBloc({
     required AuthService authService,
@@ -33,20 +34,17 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     try {
       emit(state.copyWith(isLoading: true, error: null));
       final response = await _authService.login(event.request);
-      if (response.success && response.token != null) {
-        await _prefs.setString(_tokenKey, response.token!);
-        emit(state.copyWith(
-          isLoading: false,
-          isAuthenticated: true,
-          user: response.user,
-          token: response.token,
-        ));
-      } else {
-        emit(state.copyWith(
-          isLoading: false,
-          error: response.message,
-        ));
-      }
+      
+      // Store tokens
+      await _prefs.setString(_tokenKey, response.token);
+      await _prefs.setString(_refreshTokenKey, response.refreshToken);
+
+      emit(state.copyWith(
+        isLoading: false,
+        isAuthenticated: true,
+        user: response.user,
+        token: response.token,
+      ));
     } catch (e) {
       emit(state.copyWith(
         isLoading: false,
@@ -59,20 +57,17 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     try {
       emit(state.copyWith(isLoading: true, error: null));
       final response = await _authService.register(event.request);
-      if (response.success && response.token != null) {
-        await _prefs.setString(_tokenKey, response.token!);
-        emit(state.copyWith(
-          isLoading: false,
-          isAuthenticated: true,
-          user: response.user,
-          token: response.token,
-        ));
-      } else {
-        emit(state.copyWith(
-          isLoading: false,
-          error: response.message,
-        ));
-      }
+      
+      // Store tokens
+      await _prefs.setString(_tokenKey, response.token);
+      await _prefs.setString(_refreshTokenKey, response.refreshToken);
+
+      emit(state.copyWith(
+        isLoading: false,
+        isAuthenticated: true,
+        user: response.user,
+        token: response.token,
+      ));
     } catch (e) {
       emit(state.copyWith(
         isLoading: false,
@@ -90,7 +85,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       final response = await _authService.resetPassword(event.request);
       emit(state.copyWith(
         isLoading: false,
-        error: response.success ? null : response.message,
+        error: response.success == false ? response.message : null,
       ));
     } catch (e) {
       emit(state.copyWith(
@@ -116,7 +111,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       final response = await _authService.changePassword(state.token!, event.request);
       emit(state.copyWith(
         isLoading: false,
-        error: response.success ? null : response.message,
+        error: response.success == false ? response.message : null,
       ));
     } catch (e) {
       emit(state.copyWith(
@@ -128,6 +123,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
 
   Future<void> _onLogout(LogoutEvent event, Emitter<AuthState> emit) async {
     await _prefs.remove(_tokenKey);
+    await _prefs.remove(_refreshTokenKey);
     emit(const AuthState());
   }
 
@@ -156,6 +152,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       ));
     } catch (e) {
       await _prefs.remove(_tokenKey);
+      await _prefs.remove(_refreshTokenKey);
       emit(const AuthState());
     }
   }

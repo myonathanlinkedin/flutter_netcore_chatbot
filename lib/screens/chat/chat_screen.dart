@@ -18,37 +18,12 @@ class ChatScreen extends StatefulWidget {
 class _ChatScreenState extends State<ChatScreen> {
   final _messageController = TextEditingController();
   final _scrollController = ScrollController();
-  String _selectedModel = 'gpt-4';
-  List<String> _availableModels = [];
-
-  @override
-  void initState() {
-    super.initState();
-    _loadAvailableModels();
-  }
 
   @override
   void dispose() {
     _messageController.dispose();
     _scrollController.dispose();
     super.dispose();
-  }
-
-  Future<void> _loadAvailableModels() async {
-    try {
-      final authState = context.read<AuthBloc>().state;
-      if (authState.token != null) {
-        final models = await context.read<ChatbotService>().getAvailableModels(authState.token!);
-        setState(() {
-          _availableModels = models;
-          if (models.isNotEmpty) {
-            _selectedModel = models.first;
-          }
-        });
-      }
-    } catch (e) {
-      // Handle error silently
-    }
   }
 
   void _scrollToBottom() {
@@ -95,32 +70,6 @@ class _ChatScreenState extends State<ChatScreen> {
       ),
       body: Column(
         children: [
-          Container(
-            padding: const EdgeInsets.all(16),
-            color: Colors.white,
-            child: Row(
-              children: [
-                const Text('Model: '),
-                const SizedBox(width: 8),
-                DropdownButton<String>(
-                  value: _selectedModel,
-                  items: _availableModels.map((String model) {
-                    return DropdownMenuItem<String>(
-                      value: model,
-                      child: Text(model),
-                    );
-                  }).toList(),
-                  onChanged: (String? newValue) {
-                    if (newValue != null) {
-                      setState(() {
-                        _selectedModel = newValue;
-                      });
-                    }
-                  },
-                ),
-              ],
-            ),
-          ),
           Expanded(
             child: BlocConsumer<ChatBloc, ChatState>(
               listener: (context, state) {

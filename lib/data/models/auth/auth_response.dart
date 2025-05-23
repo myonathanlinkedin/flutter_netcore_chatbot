@@ -7,10 +7,11 @@ part 'auth_response.g.dart';
 @freezed
 class AuthResponse with _$AuthResponse {
   const factory AuthResponse({
-    required bool success,
-    required String message,
+    @JsonKey(name: 'accessToken') required String token,
+    required String refreshToken,
+    bool? success,
+    String? message,
     User? user,
-    String? token,
   }) = _AuthResponse;
 
   factory AuthResponse.fromJson(Map<String, dynamic> json) =>
@@ -22,7 +23,6 @@ class ErrorResponse with _$ErrorResponse {
   const factory ErrorResponse({
     required bool success,
     required String message,
-    Map<String, List<String>>? errors,
   }) = _ErrorResponse;
 
   factory ErrorResponse.fromJson(Map<String, dynamic> json) =>

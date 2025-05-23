@@ -15,7 +15,7 @@ class AuthService {
 
   Future<AuthResponse> login(LoginRequest request) async {
     try {
-      final response = await _dio.post('/auth/login', data: request.toJson());
+      final response = await _dio.post('/Identity/Login/loginAsync', data: request.toJson());
       return AuthResponse.fromJson(response.data);
     } on DioException catch (e) {
       if (e.response?.data != null) {
@@ -27,7 +27,7 @@ class AuthService {
 
   Future<AuthResponse> register(RegisterRequest request) async {
     try {
-      final response = await _dio.post('/auth/register', data: request.toJson());
+      final response = await _dio.post('/Identity/Register/registerAsync', data: request.toJson());
       return AuthResponse.fromJson(response.data);
     } on DioException catch (e) {
       if (e.response?.data != null) {
@@ -39,7 +39,7 @@ class AuthService {
 
   Future<AuthResponse> resetPassword(ResetPasswordRequest request) async {
     try {
-      final response = await _dio.post('/auth/reset-password', data: request.toJson());
+      final response = await _dio.post('/Identity/ResetPassword/resetPasswordAsync', data: request.toJson());
       return AuthResponse.fromJson(response.data);
     } on DioException catch (e) {
       if (e.response?.data != null) {
@@ -52,7 +52,7 @@ class AuthService {
   Future<AuthResponse> changePassword(String token, ChangePasswordRequest request) async {
     try {
       _dio.options.headers['Authorization'] = 'Bearer $token';
-      final response = await _dio.post('/auth/change-password', data: request.toJson());
+      final response = await _dio.post('/Identity/ChangePassword/changePasswordAsync', data: request.toJson());
       return AuthResponse.fromJson(response.data);
     } on DioException catch (e) {
       if (e.response?.data != null) {
@@ -65,7 +65,7 @@ class AuthService {
   Future<User> getCurrentUser(String token) async {
     try {
       _dio.options.headers['Authorization'] = 'Bearer $token';
-      final response = await _dio.get('/auth/me');
+      final response = await _dio.get('/Identity/User/getCurrentUserAsync');
       return User.fromJson(response.data);
     } on DioException catch (e) {
       if (e.response?.data != null) {
