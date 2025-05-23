@@ -3,6 +3,8 @@ import '../../data/models/chat/chat_message.dart';
 import '../../services/chatbot_service.dart';
 import 'chat_event.dart';
 import 'chat_state.dart';
+import 'dart:async';
+import 'package:flutter/foundation.dart';
 
 class ChatBloc extends Bloc<ChatEvent, ChatState> {
   final ChatbotService _chatbotService;
@@ -21,6 +23,11 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
     SendMessage event,
     Emitter<ChatState> emit,
   ) async {
+    if (state.isLoading) {
+      debugPrint('ChatBloc: Ignoring send message request while loading');
+      return;
+    }
+    
     try {
       // Add user message immediately
       final userMessage = ChatMessage(
@@ -34,8 +41,23 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
         error: null,
       ));
 
-      // Get bot response
-      final response = await _chatbotService.sendMessage(event.message, _token);
+      // Get bot response with a timeout
+      String response;
+      try {
+        response = await _chatbotService.sendMessage(event.message, _token);
+      } catch (e) {
+        if (e.toString().contains('Connection timed out') || 
+            e.toString().contains('Response took too long') ||
+            e.toString().contains('Failed to send message')) {
+          emit(state.copyWith(
+            isLoading: false,
+            error: 'Please try again',
+          ));
+          return;
+        } else {
+          rethrow;
+        }
+      }
 
       // Add bot message
       final botMessage = ChatMessage(
@@ -48,6 +70,7 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
         isLoading: false,
       ));
     } catch (e) {
+      debugPrint('ChatBloc error: $e');
       emit(state.copyWith(
         isLoading: false,
         error: e.toString(),

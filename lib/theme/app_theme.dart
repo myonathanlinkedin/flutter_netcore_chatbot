@@ -25,15 +25,24 @@ class AppTheme extends ChangeNotifier {
   }
 
   static ThemeData get lightTheme {
+    const primaryColor = Color(0xFF1565C0); // Strong, dark blue for light mode
+    const buttonBlue = Color(0xFF1565C0);
+    const buttonBluePressed = Color(0xFF003c8f); // Even deeper blue for pressed
+    const backgroundColor = Color(0xFFF8F9FA);
+
     return ThemeData(
       useMaterial3: true,
       colorScheme: ColorScheme.fromSeed(
-        seedColor: const Color(0xFF0A66C2), // LinkedIn blue
+        seedColor: primaryColor,
         brightness: Brightness.light,
+        background: backgroundColor,
+        primary: primaryColor,
       ),
       appBarTheme: const AppBarTheme(
         centerTitle: true,
         elevation: 0,
+        backgroundColor: Colors.white,
+        foregroundColor: Colors.black,
       ),
       cardTheme: CardThemeData(
         elevation: 2,
@@ -54,18 +63,30 @@ class AppTheme extends ChangeNotifier {
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(8),
-          borderSide: const BorderSide(color: Color(0xFF0A66C2)),
+          borderSide: const BorderSide(color: primaryColor),
         ),
         contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
       ),
       elevatedButtonTheme: ElevatedButtonThemeData(
-        style: ElevatedButton.styleFrom(
-          backgroundColor: const Color(0xFF0A66C2),
-          foregroundColor: Colors.white,
-          elevation: 0,
-          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(24),
+        style: ButtonStyle(
+          backgroundColor: MaterialStateProperty.resolveWith<Color>((states) {
+            if (states.contains(MaterialState.pressed)) {
+              return buttonBluePressed;
+            }
+            return buttonBlue;
+          }),
+          foregroundColor: MaterialStateProperty.all<Color>(Colors.white),
+          textStyle: MaterialStateProperty.all<TextStyle>(
+            const TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+          ),
+          elevation: MaterialStateProperty.all<double>(0),
+          padding: MaterialStateProperty.all<EdgeInsets>(
+            const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+          ),
+          shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+            RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(24),
+            ),
           ),
         ),
       ),
@@ -73,15 +94,22 @@ class AppTheme extends ChangeNotifier {
   }
 
   static ThemeData get darkTheme {
+    const primaryColor = Color(0xFF5CA8F7); // Lighter blue for dark mode
+    const buttonBlue = Color(0xFF5CA8F7);
+    const buttonBluePressed = Color(0xFF1565C0);
+    const backgroundColor = Color(0xFF1A1A1A);
+
     return ThemeData(
       useMaterial3: true,
       colorScheme: ColorScheme.fromSeed(
-        seedColor: const Color(0xFF0A66C2),
+        seedColor: primaryColor,
         brightness: Brightness.dark,
+        background: backgroundColor,
       ),
       appBarTheme: const AppBarTheme(
         centerTitle: true,
         elevation: 0,
+        backgroundColor: Color(0xFF2D2D2D),
       ),
       cardTheme: CardThemeData(
         elevation: 4,
@@ -102,13 +130,13 @@ class AppTheme extends ChangeNotifier {
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(8),
-          borderSide: const BorderSide(color: Color(0xFF0A66C2)),
+          borderSide: const BorderSide(color: primaryColor),
         ),
         contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
       ),
       elevatedButtonTheme: ElevatedButtonThemeData(
         style: ElevatedButton.styleFrom(
-          backgroundColor: const Color(0xFF0A66C2),
+          backgroundColor: primaryColor,
           foregroundColor: Colors.white,
           elevation: 0,
           padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
@@ -119,4 +147,16 @@ class AppTheme extends ChangeNotifier {
       ),
     );
   }
+}
+
+Widget buildTable(List<List<String>> rows) {
+  return Table(
+    border: TableBorder.all(),
+    children: rows.map((row) => TableRow(
+      children: row.map((cell) => Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Text(cell),
+      )).toList(),
+    )).toList(),
+  );
 } 

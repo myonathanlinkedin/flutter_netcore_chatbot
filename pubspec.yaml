@@ -48,6 +48,8 @@ dependencies:
   # Utilities
   equatable: ^2.0.5
   provider: ^6.0.5
+  html: ^0.15.6
+  markdown: ^7.3.0
 
 dev_dependencies:
   flutter_test:
