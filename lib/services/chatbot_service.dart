@@ -14,11 +14,27 @@ class ChatbotService {
     try {
       _dio.options.headers['Authorization'] = 'Bearer $token';
       final response = await _dio.post('/Prompt/SendUserPrompt/SendUserPromptAsync', data: {
-        'message': message,
+        'prompt': message,
         'model': 'gpt-4', // Default model
       });
-      return response.data['response'] as String;
+      
+      // Handle the response format
+      if (response.data is String) {
+        return response.data;
+      } else if (response.data is Map<String, dynamic>) {
+        return response.data['response'] as String? ?? 
+               response.data['message'] as String? ?? 
+               'No response from the server';
+      }
+      return 'Unexpected response format';
     } on DioException catch (e) {
+      if (e.response?.data != null && e.response?.data['errors'] != null) {
+        final errors = e.response!.data['errors'] as Map<String, dynamic>;
+        final errorMessage = errors.values
+            .expand((list) => list as List)
+            .join(', ');
+        throw errorMessage;
+      }
       throw e.response?.data['message'] ?? 'Failed to send message';
     }
   }

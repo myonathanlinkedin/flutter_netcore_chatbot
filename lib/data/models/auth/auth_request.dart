@@ -19,9 +19,7 @@ class RegisterRequest with _$RegisterRequest {
   const factory RegisterRequest({
     required String email,
     required String password,
-    required String username,
-    String? firstName,
-    String? lastName,
+    required String confirmPassword,
   }) = _RegisterRequest;
 
   factory RegisterRequest.fromJson(Map<String, dynamic> json) =>
@@ -41,8 +39,9 @@ class ResetPasswordRequest with _$ResetPasswordRequest {
 @freezed
 class ChangePasswordRequest with _$ChangePasswordRequest {
   const factory ChangePasswordRequest({
-    required String oldPassword,
+    required String currentPassword,
     required String newPassword,
+    required String confirmNewPassword,
   }) = _ChangePasswordRequest;
 
   factory ChangePasswordRequest.fromJson(Map<String, dynamic> json) =>

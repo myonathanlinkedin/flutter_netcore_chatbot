@@ -40,7 +40,7 @@ class _ChatScreenState extends State<ChatScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('NetCore Chatbot'),
+        title: const Text('.NET Core Chatbot'),
         actions: [
           PopupMenuButton<String>(
             onSelected: (value) {
@@ -97,7 +97,7 @@ class _ChatScreenState extends State<ChatScreen> {
           ),
           Container(
             decoration: BoxDecoration(
-              color: Colors.white,
+              color: Theme.of(context).cardColor,
               boxShadow: [
                 BoxShadow(
                   color: Colors.black.withOpacity(0.1),
@@ -150,20 +150,24 @@ class _ChatScreenState extends State<ChatScreen> {
                   width: double.infinity,
                   padding: const EdgeInsets.symmetric(vertical: 8),
                   decoration: BoxDecoration(
-                    color: Colors.grey[100],
+                    color: Theme.of(context).brightness == Brightness.light
+                        ? Colors.grey[100]
+                        : Colors.grey[900],
                     border: Border(
                       top: BorderSide(
-                        color: Colors.grey[300]!,
+                        color: Theme.of(context).brightness == Brightness.light
+                            ? Colors.grey[300]!
+                            : Colors.grey[700]!,
                         width: 1,
                       ),
                     ),
                   ),
-                  child: const Text(
+                  child: Text(
                     'Developed by Mateus Yonathan',
                     textAlign: TextAlign.center,
                     style: TextStyle(
                       fontSize: 12,
-                      color: Colors.grey,
+                      color: Theme.of(context).textTheme.bodySmall?.color?.withOpacity(0.5),
                       fontWeight: FontWeight.w500,
                     ),
                   ),
@@ -192,6 +196,9 @@ class _ChatMessageWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final isLight = theme.brightness == Brightness.light;
+
     return Align(
       alignment: message.isUser ? Alignment.centerRight : Alignment.centerLeft,
       child: Container(
@@ -201,7 +208,11 @@ class _ChatMessageWidget extends StatelessWidget {
         margin: const EdgeInsets.symmetric(vertical: 8),
         padding: const EdgeInsets.all(12),
         decoration: BoxDecoration(
-          color: message.isUser ? Colors.blue : Colors.grey[200],
+          color: message.isUser
+              ? theme.colorScheme.primary
+              : isLight
+                  ? Colors.grey[200]
+                  : Colors.grey[800],
           borderRadius: BorderRadius.circular(12),
         ),
         child: Column(
@@ -210,7 +221,9 @@ class _ChatMessageWidget extends StatelessWidget {
             Text(
               message.text,
               style: TextStyle(
-                color: message.isUser ? Colors.white : Colors.black,
+                color: message.isUser
+                    ? Colors.white
+                    : theme.textTheme.bodyLarge?.color,
               ),
             ),
             const SizedBox(height: 4),
@@ -219,7 +232,7 @@ class _ChatMessageWidget extends StatelessWidget {
               style: TextStyle(
                 color: message.isUser
                     ? Colors.white.withOpacity(0.7)
-                    : Colors.black54,
+                    : theme.textTheme.bodySmall?.color?.withOpacity(0.7),
                 fontSize: 12,
               ),
             ),
