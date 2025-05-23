@@ -62,24 +62,4 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 ```
 
 ## **📸 Screenshots**
-![image](https://github.com/user-attachments/assets/5026cb1c-0a32-40c0-b9e8-ab94668e063b)
-
-![image](https://github.com/user-attachments/assets/02d3a8f3-6661-4e10-a849-5966a3a5bb0f)
-
-![image](https://github.com/user-attachments/assets/df0b57ec-4fab-4f6d-8152-4c477b161639)
-
-![image](https://github.com/user-attachments/assets/0d117c9a-2ac0-446a-b2d3-5275ecbe26e4)
-
-![image](https://github.com/user-attachments/assets/e4ff7d1f-63d0-4a4f-9824-7994ad97aac5)
-
-![image](https://github.com/user-attachments/assets/96a8d654-aeef-492b-9482-a2c6f1b37eab)
-
-![image](https://github.com/user-attachments/assets/42267e9a-2f45-458d-bc2f-f6975b0a17f3)
-
-![image](https://github.com/user-attachments/assets/0f5e3f4c-85c1-45a8-aa93-0f301aede4de)
-
-![image](https://github.com/user-attachments/assets/24ecd2a1-ea6d-4e78-afd4-aa451babcf48)
-
-![image](https://github.com/user-attachments/assets/1ac458dd-9e2a-47e9-93e4-9637c618cc0d)
-
-![image](https://github.com/user-attachments/assets/c0ec5660-e194-4e7b-92fe-9cf2f75d9f7f) 
+![image](https://github.com/user-attachments/assets/17ea397e-98ab-4195-9211-deea5b18c034)
